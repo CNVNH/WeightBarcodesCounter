@@ -2,9 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/cio_note_item_layout"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:padding="8dp"
+	android:paddingTop="8dp"
+	android:paddingBottom="8dp"
+	android:paddingStart="8dp"
 	android:elevation="@dimen/cio_note_item_elevation"
 	android:background="@drawable/cio_background_round">
 
@@ -25,7 +28,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintEnd_toStartOf="@id/cio_checkbox"
+		android:layout_marginEnd="8dp"
 		android:text="00.00.0000"/>
 
 	<TextView
@@ -33,7 +37,18 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		app:layout_constraintTop_toBottomOf="@id/cio_date_text"
-		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintEnd_toStartOf="@id/cio_checkbox"
+		android:layout_marginEnd="8dp"
 		android:text="00:00"/>
+
+	<CheckBox
+		android:id="@+id/cio_checkbox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		android:layout_marginEnd="8dp"
+		android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

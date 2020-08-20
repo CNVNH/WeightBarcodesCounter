@@ -1,8 +1,7 @@
 package ru.cnvnh.weightbarcodescounter.database.adapters.view_holders;
 
-import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,7 +20,7 @@ public class CIONoteViewHolder extends RecyclerView.ViewHolder implements View.O
 	
 	private CioItemNoteBinding mBinding;
 	
-	private CIONoteItemCallback MNoteItemCallbackListener;
+	private CIONoteItemCallback mNoteItemCallbackListener;
 	
 	public CIONoteViewHolder(CioItemNoteBinding binding, CIONoteItemCallback listener)
 	{
@@ -30,35 +29,40 @@ public class CIONoteViewHolder extends RecyclerView.ViewHolder implements View.O
 		mBinding = binding;
 		mBinding.getRoot().setOnClickListener(this);
 		mBinding.getRoot().setOnLongClickListener(this);
+		mBinding.cioCheckbox.setOnClickListener(this);
 		
-		MNoteItemCallbackListener = listener;
+		mNoteItemCallbackListener = listener;
 	}
 	
-	public void bindTo(CIONote note)
+	public void bindTo(CIONote note, boolean showCheckbox)
 	{
-		mBinding.getRoot().setBackgroundResource(note.isSelected ? R.drawable.cio_background_round_selected : R.drawable.cio_background_round);
-		
 		mBinding.cioNameText.setText(note.name != null && !note.name.isEmpty() ? note.name : "No name");
 		mBinding.cioDateText.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.US).format(new Date(note.timestamp)));
 		mBinding.cioTimeText.setText(new SimpleDateFormat("HH:mm", Locale.US).format(new Date(note.timestamp)));
 		
-		int textColor = mBinding.getRoot().getContext().getResources().getColor(note.isSelected ? R.color.cio_text_reversed : R.color.cio_text, null);
-		
-		mBinding.cioNameText.setTextColor(textColor);
-		mBinding.cioDateText.setTextColor(textColor);
-		mBinding.cioTimeText.setTextColor(textColor);
+		mBinding.cioCheckbox.setVisibility(showCheckbox ? View.VISIBLE : View.GONE);
+		mBinding.cioCheckbox.setChecked(note.isSelected);
 	}
 	
 	@Override
 	public void onClick(View view)
 	{
-		MNoteItemCallbackListener.onNoteClick(getAdapterPosition());
+		int id = view.getId();
+		
+		if(id == R.id.cio_note_item_layout)
+		{
+			mNoteItemCallbackListener.onNoteClick(getAdapterPosition());
+		}
+		else
+		{
+			mNoteItemCallbackListener.onCheckboxClick(getAdapterPosition(), mBinding.cioCheckbox.isChecked());
+		}
 	}
 	
 	@Override
 	public boolean onLongClick(View view)
 	{
-		MNoteItemCallbackListener.onNoteLongClick(getAdapterPosition());
+		mNoteItemCallbackListener.onNoteLongClick(getAdapterPosition());
 		
 		return true;
 	}

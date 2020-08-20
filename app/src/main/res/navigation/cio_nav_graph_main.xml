@@ -21,9 +21,9 @@
 
 	<fragment
 		android:id="@+id/cio_dest_note"
-		android:name="ru.cnvnh.weightbarcodescounter.ui.fragments.CIONoteFragment"
+		android:name="ru.cnvnh.weightbarcodescounter.ui.fragments.CIOBarcodesFragment"
 		android:label="NoteV2"
-		tools:layout="@layout/cio_fragment_note">
+		tools:layout="@layout/cio_fragment_barcodes">
 
 		<action
 			android:id="@+id/cio_action_note_to_scanner"

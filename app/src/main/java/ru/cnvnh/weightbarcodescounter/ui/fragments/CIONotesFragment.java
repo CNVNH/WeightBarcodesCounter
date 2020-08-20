@@ -38,7 +38,7 @@ public class CIONotesFragment extends CIOBaseFragment implements View.OnClickLis
 	private CIONotesAdapter mNotesAdapter;
 	
 	private CIONotesViewModel mNotesViewModel;
-	private CIONoteViewModel mNoteViewModelV2;
+	private CIONoteViewModel mNoteViewModel;
 	
 	private boolean mInSelectionMode;
 	
@@ -82,7 +82,7 @@ public class CIONotesFragment extends CIOBaseFragment implements View.OnClickLis
 		mNotesViewModel.loadAllNotes(requireContext());
 		mNotesViewModel.getNotes().observe(getViewLifecycleOwner(), mNotesObserver);
 		
-		mNoteViewModelV2 = new ViewModelProvider(requireActivity()).get(CIONoteViewModel.class);
+		mNoteViewModel = new ViewModelProvider(requireActivity()).get(CIONoteViewModel.class);
 		
 		mInSelectionMode = false;
 	}
@@ -105,7 +105,7 @@ public class CIONotesFragment extends CIOBaseFragment implements View.OnClickLis
 		switch(view.getId())
 		{
 			case R.id.cio_add_button:
-				mNoteViewModelV2.createNewNote();
+				mNoteViewModel.createNewNote();
 				NavHostFragment.findNavController(this).navigate(R.id.cio_action_notes_to_note_v2);
 				break;
 			case R.id.cio_delete_button:
@@ -127,15 +127,11 @@ public class CIONotesFragment extends CIOBaseFragment implements View.OnClickLis
 	@Override
 	public void onNoteClick(int pos)
 	{
-		if(mInSelectionMode)
-		{
-			mNotesAdapter.toggleNoteSelection(pos);
-		}
-		else
+		if(!mInSelectionMode)
 		{
 			showLoadingDialog();
 			
-			mNoteViewModelV2.setNote(mNotesAdapter.getNote(pos));
+			mNoteViewModel.setNote(mNotesAdapter.getNote(pos));
 			NavHostFragment.findNavController(this).navigate(R.id.cio_action_notes_to_note_v2);
 		}
 	}
@@ -145,10 +141,16 @@ public class CIONotesFragment extends CIOBaseFragment implements View.OnClickLis
 	{
 		if(!mInSelectionMode)
 		{
-			toggleSelectionMode();
+			mNotesAdapter.showCheckboxes(pos);
 			
-			mNotesAdapter.toggleNoteSelection(pos);
+			toggleSelectionMode();
 		}
+	}
+	
+	@Override
+	public void onCheckboxClick(int pos, boolean checked)
+	{
+		mNotesAdapter.setChecked(pos, checked);
 	}
 	
 	/* ****************************************************************************************** *
@@ -177,8 +179,6 @@ public class CIONotesFragment extends CIOBaseFragment implements View.OnClickLis
 	@Override
 	public void onNotesDeleted(int deletedNotesCount)
 	{
-		dismissLoadingDialog();
-		
 		Toast.makeText(requireContext(), deletedNotesCount + " notes deleted", Toast.LENGTH_SHORT).show();
 	}
 	
@@ -196,6 +196,8 @@ public class CIONotesFragment extends CIOBaseFragment implements View.OnClickLis
 			
 			mNotesViewModel.deleteNotes(requireContext(), selectedNotes, this);
 		}
+		
+		mNotesAdapter.clearSelection();
 		
 		toggleSelectionMode();
 	}

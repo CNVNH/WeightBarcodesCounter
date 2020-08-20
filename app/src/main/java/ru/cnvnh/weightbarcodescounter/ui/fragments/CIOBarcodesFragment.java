@@ -1,6 +1,7 @@
 package ru.cnvnh.weightbarcodescounter.ui.fragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -25,35 +27,45 @@ import java.util.List;
 import ru.cnvnh.weightbarcodescounter.R;
 import ru.cnvnh.weightbarcodescounter.database.adapters.CIOBarcodeAdapter;
 import ru.cnvnh.weightbarcodescounter.database.adapters.callbacks.CIOBarcodeItemCallback;
-import ru.cnvnh.weightbarcodescounter.database.adapters.decorations.CIOMarginDecoration;
 import ru.cnvnh.weightbarcodescounter.database.models.CIOBarcode;
-import ru.cnvnh.weightbarcodescounter.databinding.CioFragmentNoteBinding;
+import ru.cnvnh.weightbarcodescounter.database.repos.callbacks.CIOBarcodeRepoCallback;
+import ru.cnvnh.weightbarcodescounter.databinding.CioFragmentBarcodesBinding;
 import ru.cnvnh.weightbarcodescounter.ui.fragments.bases.CIOBaseFragment;
 import ru.cnvnh.weightbarcodescounter.ui.view_models.CIOBarcodesViewModel;
 import ru.cnvnh.weightbarcodescounter.ui.view_models.CIONoteViewModel;
 
-public class CIONoteFragment extends CIOBaseFragment implements View.OnClickListener, CIOBarcodeItemCallback
+public class CIOBarcodesFragment extends CIOBaseFragment implements View.OnClickListener, CIOBarcodeItemCallback, CIOBarcodeRepoCallback
 {
-	private static final String TAG = "CIONoteFragmentV2";
+	private static final String TAG = "CIONoteFragment";
 	
 	private static final int CIO_REQUEST_PERMISSION_CAMERA = 27090;
 	
-	private CioFragmentNoteBinding mBinding;
+	private CioFragmentBarcodesBinding mBinding;
 	
 	private CIOBarcodeAdapter mBarcodesAdapter;
 	
 	private CIONoteViewModel mNoteViewModel;
 	private CIOBarcodesViewModel mBarcodesViewModel;
 	
+	private boolean mInSelectionMode;
+	
 	/* ****************************************************************************************** *
 	 * * LIFECYCLE																				* *
 	 * ****************************************************************************************** */
+	
+	@Override
+	public void onAttach(@NonNull Context context)
+	{
+		super.onAttach(context);
+		
+		requireActivity().getOnBackPressedDispatcher().addCallback(mOnBackPressedCallback);
+	}
 	
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
 	{
-		mBinding = CioFragmentNoteBinding.inflate(inflater, container, false);
+		mBinding = CioFragmentBarcodesBinding.inflate(inflater, container, false);
 		
 		return mBinding.getRoot();
 	}
@@ -120,33 +132,65 @@ public class CIONoteFragment extends CIOBaseFragment implements View.OnClickList
 				NavHostFragment.findNavController(this).navigate(R.id.cio_action_note_to_scanner);
 				break;
 			case R.id.cio_delete_button:
-				Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show();
+				deleteSelectedBarcodes();
 				break;
 		}
 	}
 	
+	private OnBackPressedCallback mOnBackPressedCallback = new OnBackPressedCallback(false)
+	{
+		@Override
+		public void handleOnBackPressed()
+		{
+			mBarcodesAdapter.clearSelection();
+			toggleSelectionMode();
+		}
+	};
+	
 	@Override
 	public void onBarcodeClick(int pos)
 	{
-		mBarcodesAdapter.onBarcodeClick(pos);
+	
 	}
 	
 	@Override
 	public void onBarcodeParentClick(int pos)
 	{
-		mBarcodesAdapter.onBarcodeParentClick(pos);
+		mBarcodesAdapter.toggleParentExpanded(pos);
 	}
 	
 	@Override
 	public void onBarcodeLongClick(int pos)
 	{
-		mBarcodesAdapter.onBarcodeLongClick(pos);
+		if(!mInSelectionMode)
+		{
+			mBarcodesAdapter.showCheckboxesBarcode(pos);
+			
+			toggleSelectionMode();
+		}
 	}
 	
 	@Override
 	public void onBarcodeParentLongClick(int pos)
 	{
-		mBarcodesAdapter.onBarcodeParentLongClick(pos);
+		if(!mInSelectionMode)
+		{
+			mBarcodesAdapter.showCheckboxesBarcodeParent(pos);
+			
+			toggleSelectionMode();
+		}
+	}
+	
+	@Override
+	public void onBarcodeCheckboxClick(int pos, boolean checked)
+	{
+		mBarcodesAdapter.setCheckedBarcode(pos, checked);
+	}
+	
+	@Override
+	public void onBarcodeParentCheckboxClick(int pos, boolean checked)
+	{
+		mBarcodesAdapter.setCheckedBarcodeParent(pos, checked);
 	}
 	
 	/* ****************************************************************************************** *
@@ -202,7 +246,39 @@ public class CIONoteFragment extends CIOBaseFragment implements View.OnClickList
 		}
 	}
 	
+	@Override
+	public void onBarcodesDeleted(int deletedBarcodesCount)
+	{
+		Toast.makeText(requireContext(), deletedBarcodesCount + " barcodes deleted", Toast.LENGTH_SHORT).show();
+	}
+	
 	/* ****************************************************************************************** *
 	 * * FUNCTIONS																				* *
 	 * ****************************************************************************************** */
+	
+	private void deleteSelectedBarcodes()
+	{
+		List<CIOBarcode> selectedBarcodes = mBarcodesAdapter.getSelectedBarcodes();
+	
+		if(selectedBarcodes.size() > 0)
+		{
+			showLoadingDialog();
+			
+			mBarcodesViewModel.deleteBarcodes(requireContext(), selectedBarcodes, this);
+		}
+		
+		mBarcodesAdapter.clearSelection();
+		
+		toggleSelectionMode();
+	}
+	
+	private void toggleSelectionMode()
+	{
+		mInSelectionMode = !mInSelectionMode;
+		
+		mOnBackPressedCallback.setEnabled(mInSelectionMode);
+		
+		mBinding.cioDeleteButton.setVisibility(mInSelectionMode ? View.VISIBLE : View.INVISIBLE);
+		mBinding.cioScanButton.setVisibility(mInSelectionMode ? View.INVISIBLE : View.VISIBLE);
+	}
 }

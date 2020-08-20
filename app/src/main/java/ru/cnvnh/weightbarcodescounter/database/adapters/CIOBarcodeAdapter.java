@@ -25,10 +25,14 @@ public class CIOBarcodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 	
 	private List<CIOExpandableListItem> mItems = new ArrayList<>();
 	
+	private boolean mShowCheckboxes;
+	
 	private CIOBarcodeItemCallback mBarcodeItemCallbackListener;
 	
 	public CIOBarcodeAdapter(CIOBarcodeItemCallback listener)
 	{
+		mShowCheckboxes = false;
+		
 		mBarcodeItemCallbackListener = listener;
 	}
 	
@@ -51,7 +55,7 @@ public class CIOBarcodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 	{
 		if(holder.getItemViewType() == CIOExpandableListItem.BARCODE_PARENT)
 		{
-			((CIOBarcodeParentViewHolder) holder).bindTo((CIOBarcodeParent) mItems.get(pos));
+			((CIOBarcodeParentViewHolder) holder).bindTo((CIOBarcodeParent) mItems.get(pos), mShowCheckboxes);
 		}
 		else
 		{
@@ -66,7 +70,7 @@ public class CIOBarcodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 				atBottom = true;
 			}
 			
-			((CIOBarcodeViewHolder) holder).bindTo((CIOBarcode) mItems.get(pos), atBottom);
+			((CIOBarcodeViewHolder) holder).bindTo((CIOBarcode) mItems.get(pos), atBottom, mShowCheckboxes);
 		}
 	}
 	
@@ -118,45 +122,138 @@ public class CIOBarcodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 		notifyDataSetChanged();
 	}
 	
-	public void onBarcodeClick(int pos)
+	public void toggleParentExpanded(int pos)
 	{
-		Log.d(TAG, "onBarcodeClick");
-	}
-	
-	public void onBarcodeParentClick(int pos)
-	{
-		Log.d(TAG, "onBarcodeParentClick");
+		CIOBarcodeParent parent = (CIOBarcodeParent) mItems.get(pos);
 		
 		int startPos = pos + 1;
-		int count = ((CIOBarcodeParent) mItems.get(pos)).barcodes.size();
+		int count = parent.barcodes.size();
 		
-		if(((CIOBarcodeParent) mItems.get(pos)).isExpanded)
+		parent.isExpanded = !parent.isExpanded;
+		
+		notifyItemChanged(pos);
+		
+		if(parent.isExpanded)
 		{
-			mItems.removeAll(((CIOBarcodeParent) mItems.get(pos)).barcodes);
-			notifyItemRangeRemoved(startPos, count);
+			mItems.addAll(startPos, parent.barcodes);
+			notifyItemRangeInserted(startPos, count);
 		}
 		else
 		{
-			mItems.addAll(startPos, ((CIOBarcodeParent) mItems.get(pos)).barcodes);
-			notifyItemRangeInserted(startPos, count);
+			mItems.removeAll(parent.barcodes);
+			notifyItemRangeRemoved(startPos, count);
+		}
+	}
+	
+	public void setCheckedBarcode(int pos, boolean checked)
+	{
+		CIOBarcode barcode = (CIOBarcode) mItems.get(pos);
+		
+		barcode.isSelected = checked;
+		
+		int parentPos = pos - 1;
+		
+		while(mItems.get(parentPos) instanceof CIOBarcode)
+		{
+			parentPos--;
 		}
 		
-		((CIOBarcodeParent) mItems.get(pos)).isExpanded = !((CIOBarcodeParent) mItems.get(pos)).isExpanded;
+		CIOBarcodeParent parent = (CIOBarcodeParent) mItems.get(parentPos);
+		
+		boolean allSelected = true;
+		
+		for(int i = 0; i < parent.barcodes.size(); i++)
+		{
+			if(!parent.barcodes.get(i).isSelected)
+			{
+				allSelected = false;
+				
+				break;
+			}
+		}
+		
+		if(parent.isSelected != allSelected)
+		{
+			parent.isSelected = allSelected;
+			
+			notifyItemChanged(parentPos);
+		}
 		
 		notifyItemChanged(pos);
 	}
 	
-	public void onBarcodeLongClick(int pos)
+	public void setCheckedBarcodeParent(int pos, boolean checked)
 	{
-		Log.d(TAG, "onBarcodeLongClick");
+		Log.d(TAG, "setCheckedBarcodeParent");
+		
+		CIOBarcodeParent parent = (CIOBarcodeParent) mItems.get(pos);
+		
+		parent.isSelected = checked;
+		
+		for(int i = 0; i < parent.barcodes.size(); i++)
+		{
+			parent.barcodes.get(i).isSelected = parent.isSelected;
+		}
+		
+		if(parent.isExpanded)
+		{
+			notifyItemRangeChanged(pos + 1, parent.barcodes.size());
+		}
 	}
 	
-	public void onBarcodeParentLongClick(int pos)
+	public void showCheckboxesBarcode(int pos)
 	{
-		Log.d(TAG, "onBarcodeParentLongClick");
+		showCheckboxes();
 		
-		mItems.get(pos).isSelected = !mItems.get(pos).isSelected;
+		setCheckedBarcode(pos, true);
+	}
+	
+	public void showCheckboxesBarcodeParent(int pos)
+	{
+		showCheckboxes();
 		
-		notifyItemChanged(pos);
+		setCheckedBarcodeParent(pos, true);
+	}
+	
+	public void showCheckboxes()
+	{
+		Log.d(TAG, "showCheckboxes");
+		
+		mShowCheckboxes = true;
+		
+		notifyDataSetChanged();
+	}
+	
+	public void clearSelection()
+	{
+		mShowCheckboxes = false;
+		
+		for(CIOExpandableListItem item : mItems)
+		{
+			item.isSelected = false;
+		}
+		
+		notifyDataSetChanged();
+	}
+	
+	public List<CIOBarcode> getSelectedBarcodes()
+	{
+		List<CIOBarcode> barcodes = new ArrayList<>();
+		
+		for(CIOExpandableListItem item : mItems)
+		{
+			if(item instanceof CIOBarcodeParent)
+			{
+				for(CIOBarcode barcode : ((CIOBarcodeParent) item).barcodes)
+				{
+					if(barcode.isSelected)
+					{
+						barcodes.add(barcode);
+					}
+				}
+			}
+		}
+		
+		return barcodes;
 	}
 }

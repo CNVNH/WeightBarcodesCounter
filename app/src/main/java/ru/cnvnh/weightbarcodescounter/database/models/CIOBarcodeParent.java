@@ -7,8 +7,6 @@ import ru.cnvnh.weightbarcodescounter.database.models.bases.CIOExpandableListIte
 
 public class CIOBarcodeParent extends CIOExpandableListItem
 {
-	public String code;
-	
 	public int totalWeight;
 	
 	public boolean isExpanded;

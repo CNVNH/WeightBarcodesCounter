@@ -1,5 +1,6 @@
 package ru.cnvnh.weightbarcodescounter.database.models.bases;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Ignore;
 
 public abstract class CIOExpandableListItem
@@ -11,4 +12,7 @@ public abstract class CIOExpandableListItem
 	
 	@Ignore
 	public boolean isSelected;
+	
+	@ColumnInfo(name = "code")
+	public String code;
 }

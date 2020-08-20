@@ -18,10 +18,14 @@ public class CIONotesAdapter extends RecyclerView.Adapter<CIONoteViewHolder>
 {
 	private List<CIONote> mNotes = new ArrayList<>();
 	
+	private boolean mShowCheckboxes;
+	
 	private CIONoteItemCallback mNoteItemCallbackListener;
 	
 	public CIONotesAdapter(CIONoteItemCallback noteItemCallbackListener)
 	{
+		mShowCheckboxes = false;
+		
 		mNoteItemCallbackListener = noteItemCallbackListener;
 	}
 	
@@ -35,7 +39,7 @@ public class CIONotesAdapter extends RecyclerView.Adapter<CIONoteViewHolder>
 	@Override
 	public void onBindViewHolder(@NonNull CIONoteViewHolder holder, int pos)
 	{
-		holder.bindTo(mNotes.get(pos));
+		holder.bindTo(mNotes.get(pos), mShowCheckboxes);
 	}
 	
 	@Override
@@ -56,21 +60,35 @@ public class CIONotesAdapter extends RecyclerView.Adapter<CIONoteViewHolder>
 		return mNotes.get(pos);
 	}
 	
-	public void toggleNoteSelection(int pos)
+	public void setChecked(int pos, boolean checked)
 	{
-		mNotes.get(pos).isSelected = !mNotes.get(pos).isSelected;
+		mNotes.get(pos).isSelected = checked;
+	}
+	
+	public void showCheckboxes()
+	{
+		mShowCheckboxes = true;
 		
-		notifyItemChanged(pos);
+		notifyDataSetChanged();
+	}
+	
+	public void showCheckboxes(int pos)
+	{
+		setChecked(pos, true);
+		
+		showCheckboxes();
 	}
 	
 	public void clearSelection()
 	{
-		for(int i = 0; i < mNotes.size(); i++)
+		mShowCheckboxes = false;
+		
+		for(CIONote note : mNotes)
 		{
-			mNotes.get(i).isSelected = false;
-			
-			notifyItemChanged(i);
+			note.isSelected = false;
 		}
+		
+		notifyDataSetChanged();
 	}
 	
 	public List<CIONote> getSelectedNotes()

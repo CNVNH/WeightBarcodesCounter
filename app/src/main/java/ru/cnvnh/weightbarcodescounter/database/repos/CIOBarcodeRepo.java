@@ -1,6 +1,7 @@
 package ru.cnvnh.weightbarcodescounter.database.repos;
 
 import android.content.Context;
+import android.os.Looper;
 
 import androidx.lifecycle.LiveData;
 
@@ -9,6 +10,7 @@ import java.util.concurrent.Executors;
 
 import ru.cnvnh.weightbarcodescounter.database.CIODatabase;
 import ru.cnvnh.weightbarcodescounter.database.models.CIOBarcode;
+import ru.cnvnh.weightbarcodescounter.database.repos.callbacks.CIOBarcodeRepoCallback;
 
 public class CIOBarcodeRepo
 {
@@ -47,6 +49,24 @@ public class CIOBarcodeRepo
 			public void run()
 			{
 				CIODatabase.getInstance(context).barcodes().insert(barcode);
+			}
+		});
+	}
+	
+	public void deleteBarcodes(final Context context, final List<CIOBarcode> barcodes, final CIOBarcodeRepoCallback barcodeRepoCallbackListener)
+	{
+		Executors.newSingleThreadExecutor().execute(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				int count = CIODatabase.getInstance(context).barcodes().delete(barcodes);
+				
+				Looper.prepare();
+				
+				barcodeRepoCallbackListener.onBarcodesDeleted(count);
+				
+				Looper.loop();
 			}
 		});
 	}

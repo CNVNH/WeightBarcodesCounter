@@ -18,9 +18,6 @@ public class CIOBarcode extends CIOExpandableListItem
 	@ColumnInfo(name = "timestamp")
 	public long timestamp;
 	
-	@ColumnInfo(name = "code")
-	public String code;
-	
 	@ColumnInfo(name = "weight")
 	public int weight;
 	

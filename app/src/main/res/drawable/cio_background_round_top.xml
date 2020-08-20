@@ -4,7 +4,7 @@
 	android:shape="rectangle">
 
 	<solid
-		android:color="#ffffffff"/>
+		android:color="@color/cio_barcode_parent_item_background_color"/>
 
 	<corners
 		android:topLeftRadius="8dp"
