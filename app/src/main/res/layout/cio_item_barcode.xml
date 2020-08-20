@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="@dimen/cio_barcode_item_height"
+	android:layout_marginTop="1dp"
+	android:elevation="@dimen/cio_barcode_item_elevation"
+	android:background="@color/cio_barcode_item_background_color">
+
+	<TextView
+		android:id="@+id/cio_weight_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		android:layout_marginEnd="8dp"
+		android:text="00000"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

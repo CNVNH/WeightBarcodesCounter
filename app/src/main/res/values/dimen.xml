@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="cio_margin_decoration_height">8dp</dimen>
+
+	<dimen name="cio_note_item_elevation">4dp</dimen>
+
+	<dimen name="cio_barcode_parent_item_height">54dp</dimen>
+	<dimen name="cio_barcode_parent_item_elevation">4dp</dimen>
+
+	<dimen name="cio_barcode_item_height">54dp</dimen>
+	<dimen name="cio_barcode_item_elevation">2dp</dimen>
+
+	<dimen name="cio_bottom_bar_elevation">8dp</dimen>
+</resources>

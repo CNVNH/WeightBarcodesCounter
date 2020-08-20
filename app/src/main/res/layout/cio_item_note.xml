@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:padding="8dp"
+	android:elevation="@dimen/cio_note_item_elevation"
+	android:background="@drawable/cio_background_round">
+
+	<TextView
+		android:id="@+id/cio_name_text"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toStartOf="@id/cio_date_text"
+		android:layout_marginEnd="8dp"
+		android:text="Name"
+		android:maxLines="2"
+		android:ellipsize="end"/>
+
+	<TextView
+		android:id="@+id/cio_date_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		android:text="00.00.0000"/>
+
+	<TextView
+		android:id="@+id/cio_time_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toBottomOf="@id/cio_date_text"
+		app:layout_constraintEnd_toEndOf="parent"
+		android:text="00:00"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/cio_nav_graph_main"
+	app:startDestination="@id/cio_dest_notes">
+
+	<fragment
+		android:id="@+id/cio_dest_notes"
+		android:name="ru.cnvnh.weightbarcodescounter.ui.fragments.CIONotesFragment"
+		android:label="Notes"
+		tools:layout="@layout/cio_fragment_notes">
+
+		<action
+			android:id="@+id/cio_action_notes_to_note_v2"
+			app:destination="@id/cio_dest_note"
+			app:launchSingleTop="true"/>
+
+	</fragment>
+
+	<fragment
+		android:id="@+id/cio_dest_note"
+		android:name="ru.cnvnh.weightbarcodescounter.ui.fragments.CIONoteFragment"
+		android:label="NoteV2"
+		tools:layout="@layout/cio_fragment_note">
+
+		<action
+			android:id="@+id/cio_action_note_to_scanner"
+			app:destination="@id/cio_dest_scanner"
+			app:launchSingleTop="true"/>
+
+	</fragment>
+
+	<fragment
+		android:id="@+id/cio_dest_scanner"
+		android:name="ru.cnvnh.weightbarcodescounter.ui.fragments.CIOScannerFragment"
+		android:label="Scanner"
+		tools:layout="@layout/cio_fragment_scanner">
+
+	</fragment>
+
+</navigation>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="colorPrimary">#ff000000</color> <!--#6200EE-->
+	<color name="colorPrimaryDark">#ff000000</color> <!--#3700B3-->
+	<color name="colorAccent">#ff000000</color> <!--#03DAC5-->
+
+	<color name="cio_text">#80000000</color>
+	<color name="cio_text_reversed">#f0ffffff</color>
+
+	<color name="cio_main_background_color">#ffdddddd</color>
+
+	<color name="cio_note_item_background_color">#ffffffff</color>
+
+	<color name="cio_barcode_parent_item_background_color">#ffffffff</color>
+
+	<color name="cio_barcode_item_background_color">#fff7f7f7</color>
+
+	<color name="cio_bottom_bar_background_color">#ffffffff</color>
+</resources>
