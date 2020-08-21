@@ -31,8 +31,6 @@ public class CIOBarcodeViewHolder extends CIOBarcodeBaseViewHolder
 	
 	public void bindTo(CIOBarcode barcode, boolean atBottom, boolean showCheckbox)
 	{
-		Log.d(TAG, "bindTo");
-		
 		mBinding.getRoot().setBackgroundResource(atBottom ? R.drawable.cio_background_round_bottom : R.drawable.cio_background);
 		
 		mBinding.cioWeightText.setText(String.format(Locale.US, "%.1f g", (float) barcode.weight / 10.0f));
@@ -44,8 +42,6 @@ public class CIOBarcodeViewHolder extends CIOBarcodeBaseViewHolder
 	@Override
 	public void onClick(View view)
 	{
-		Log.d(TAG, "onClick");
-		
 		int id = view.getId();
 		
 		if(id == R.id.cio_barcode_item_layout)
@@ -61,8 +57,6 @@ public class CIOBarcodeViewHolder extends CIOBarcodeBaseViewHolder
 	@Override
 	public boolean onLongClick(View view)
 	{
-		Log.d(TAG, "onLongClick");
-		
 		mBarcodeItemCallbackListener.onBarcodeLongClick(getAdapterPosition());
 		
 		return true;

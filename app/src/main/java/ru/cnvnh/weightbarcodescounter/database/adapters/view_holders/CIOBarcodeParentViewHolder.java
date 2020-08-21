@@ -32,8 +32,6 @@ public class CIOBarcodeParentViewHolder extends CIOBarcodeBaseViewHolder
 	
 	public void bindTo(CIOBarcodeParent parent, boolean showCheckbox)
 	{
-		Log.d(TAG, "bindTo");
-		
 		mBinding.getRoot().setBackgroundResource(parent.isExpanded ? R.drawable.cio_background_round_top : R.drawable.cio_background_round);
 		
 		mBinding.cioCodeText.setText(parent.code);
@@ -46,8 +44,6 @@ public class CIOBarcodeParentViewHolder extends CIOBarcodeBaseViewHolder
 	@Override
 	public void onClick(View view)
 	{
-		Log.d(TAG, "onClick");
-		
 		int id = view.getId();
 		
 		if(id == R.id.cio_barcode_parent_item_layout)
@@ -64,8 +60,6 @@ public class CIOBarcodeParentViewHolder extends CIOBarcodeBaseViewHolder
 	@Override
 	public boolean onLongClick(View view)
 	{
-		Log.d(TAG, "onLongClick");
-		
 		mBarcodeItemCallbackListener.onBarcodeParentLongClick(getAdapterPosition());
 		
 		return true;
